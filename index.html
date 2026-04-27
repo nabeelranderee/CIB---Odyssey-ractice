@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Odyssey-Style CIB Technology Graduate Practice Assessment</title>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#111832; --panel2:#162040; --card:#1a2448; --muted:#8fa0cf;
+      --text:#f4f7ff; --line:#2a3768; --accent:#75e4ff; --accent2:#9b8cff; --good:#44d48b;
+      --warn:#ffd166; --bad:#ff6b7c; --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 10% 5%, rgba(117,228,255,.20), transparent 35%),
+        radial-gradient(circle at 90% 20%, rgba(155,140,255,.20), transparent 30%),
+        linear-gradient(135deg,#080c18 0%, #101938 50%, #090d1d 100%);
+      min-height:100vh;
+    }
+    button, select, input{font:inherit}
+    .app{max-width:1180px;margin:0 auto;padding:24px}
+    header{
+      display:flex;justify-content:space-between;gap:18px;align-items:center;
+      padding:22px 0 18px;
+    }
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{
+      width:48px;height:48px;border-radius:16px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:grid;place-items:center;color:#06101f;font-weight:900;box-shadow:var(--shadow);
+    }
+    h1{font-size:clamp(1.35rem,3vw,2.1rem);line-height:1.05;margin:0}
+    .subtitle{color:var(--muted);margin-top:6px;font-size:.96rem}
+    .pillbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .pill{
+      border:1px solid var(--line);background:rgba(255,255,255,.04);
+      padding:9px 12px;border-radius:999px;color:#dbe5ff;font-size:.9rem;
+    }
+    .grid{display:grid;grid-template-columns:280px 1fr;gap:20px}
+    .side,.main,.modal-card{
+      background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.10); border-radius:var(--radius);
+      box-shadow:var(--shadow); backdrop-filter:blur(14px);
+    }
+    .side{padding:18px;position:sticky;top:18px;height:fit-content}
+    .main{padding:22px;min-height:680px}
+    .section-title{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:8px 0 10px}
+    .navbtn{
+      width:100%;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);
+      border-radius:16px;padding:12px;text-align:left;margin:7px 0;cursor:pointer;transition:.18s;
+    }
+    .navbtn:hover,.navbtn.active{border-color:var(--accent);transform:translateY(-1px);background:rgba(117,228,255,.10)}
+    .navbtn small{display:block;color:var(--muted);margin-top:3px}
+    .controls{display:grid;gap:10px;margin:14px 0}
+    label{font-size:.85rem;color:#c7d4ff}
+    select,input[type="number"]{
+      width:100%;padding:11px 12px;border-radius:14px;border:1px solid var(--line);
+      background:#0d1530;color:var(--text);
+    }
+    .btn{
+      border:0;border-radius:16px;padding:12px 15px;cursor:pointer;font-weight:700;color:#06101f;
+      background:linear-gradient(135deg,var(--accent),#d9fbff);box-shadow:0 10px 25px rgba(117,228,255,.18);
+      transition:.18s;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.secondary{background:#202b55;color:var(--text);border:1px solid var(--line);box-shadow:none}
+    .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent);box-shadow:none}
+    .btn.danger{background:linear-gradient(135deg,var(--bad),#ffc2ca)}
+    .topline{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;flex-wrap:wrap}
+    .hero{
+      padding:24px;border-radius:24px;background:
+      linear-gradient(135deg,rgba(117,228,255,.14),rgba(155,140,255,.10));
+      border:1px solid rgba(255,255,255,.10);margin-bottom:18px;
+    }
+    .hero h2{margin:0 0 10px;font-size:1.55rem}
+    .hero p{color:#d9e2ff;line-height:1.58;margin:8px 0}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .card{
+      background:rgba(18,27,58,.82);border:1px solid var(--line);
+      border-radius:20px;padding:16px;min-height:128px;
+    }
+    .card h3{margin:0 0 8px;font-size:1rem}
+    .card p,.tiny{color:var(--muted);font-size:.92rem;line-height:1.45}
+    .metric{font-size:1.8rem;font-weight:900;margin:4px 0}
+    .question-card{
+      background:rgba(18,27,58,.86);border:1px solid var(--line);
+      border-radius:24px;padding:20px;margin-top:16px;
+    }
+    .qmeta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+    .tag{font-size:.78rem;color:#dbe5ff;border:1px solid var(--line);border-radius:999px;padding:6px 9px;background:rgba(255,255,255,.04)}
+    .tag.good{border-color:rgba(68,212,139,.55);color:#b6ffd8}
+    .tag.warn{border-color:rgba(255,209,102,.55);color:#ffe6a3}
+    .tag.bad{border-color:rgba(255,107,124,.55);color:#ffcbd2}
+    .prompt{font-size:1.05rem;line-height:1.55;margin:10px 0 16px}
+    .stimulus{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:12px 0 18px}
+    .tile{
+      width:62px;height:62px;border-radius:16px;border:1px solid var(--line);
+      display:grid;place-items:center;background:#0e1734;font-size:1.8rem;font-weight:800;position:relative;
+    }
+    .tile.small{width:46px;height:46px;border-radius:13px;font-size:1.35rem}
+    .matrix{display:grid;grid-template-columns:repeat(3,62px);gap:9px}
+    .series{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+    .arrow{color:var(--muted);font-size:1.4rem}
+    .options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+    .option{
+      border:1px solid var(--line);border-radius:17px;background:#0f1835;color:var(--text);
+      padding:13px;cursor:pointer;text-align:left;min-height:55px;transition:.15s;
+    }
+    .option:hover{border-color:var(--accent);background:#13204a}
+    .option.selected{border-color:var(--accent);box-shadow:0 0 0 2px rgba(117,228,255,.15) inset}
+    .option.correct{border-color:var(--good);background:rgba(68,212,139,.14)}
+    .option.wrong{border-color:var(--bad);background:rgba(255,107,124,.12)}
+    .explain{
+      margin-top:16px;padding:15px;border-radius:17px;border:1px solid var(--line);
+      background:rgba(255,255,255,.04);color:#dce6ff;line-height:1.55;
+    }
+    .progress-wrap{height:10px;background:#0c1430;border-radius:999px;overflow:hidden;border:1px solid var(--line);margin:14px 0}
+    .progress{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:.2s}
+    table{width:100%;border-collapse:collapse;margin:12px 0;border-radius:16px;overflow:hidden}
+    th,td{border:1px solid var(--line);padding:10px;text-align:left}
+    th{background:#14204a;color:#dce6ff}
+    td{background:#0f1835;color:#eaf0ff}
+    .toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:16px}
+    .timer{font-variant-numeric:tabular-nums;font-weight:900;font-size:1.1rem;color:#e6fbff}
+    .kbd{padding:2px 6px;border:1px solid var(--line);border-radius:6px;background:#0b132d;color:#cdd9ff;font-size:.8rem}
+    .hidden{display:none!important}
+    .result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+    .review-item{border:1px solid var(--line);border-radius:16px;padding:13px;margin:10px 0;background:#0f1835}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;place-items:center;padding:20px;z-index:10}
+    .modal.show{display:grid}
+    .modal-card{max-width:760px;width:100%;padding:22px}
+    .coach-list{display:grid;gap:10px}
+    .coach-list li{margin-bottom:8px;color:#dbe5ff;line-height:1.45}
+    .bank-note{border-left:4px solid var(--accent);padding:12px 14px;background:rgba(117,228,255,.08);border-radius:12px;color:#e7f9ff}
+    .footer-note{color:var(--muted);font-size:.82rem;margin-top:16px;line-height:1.45}
+    @media(max-width:920px){.grid{grid-template-columns:1fr}.side{position:static}.cards{grid-template-columns:1fr 1fr}.result-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:620px){.app{padding:14px}.cards,.options,.result-grid{grid-template-columns:1fr}.tile{width:54px;height:54px}.matrix{grid-template-columns:repeat(3,54px)}header{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="logo">OT</div>
+      <div>
+        <h1>Odyssey-Style CIB Technology Graduate Practice</h1>
+        <div class="subtitle">Expanded interactive learning + timed mock assessment for numerical, logical, clerical, classification and judgement skills.</div>
+      </div>
+    </div>
+    <div class="pillbar">
+      <span class="pill" id="savedBadge">Progress: loading…</span>
+      <span class="pill">Standalone HTML</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <aside class="side">
+      <div class="section-title">Assessment Modules</div>
+      <button class="navbtn active" data-view="home">Dashboard<small>Start here</small></button>
+      <button class="navbtn" data-module="matrix">Pattern Matrices<small>Multi-rule grids</small></button>
+      <button class="navbtn" data-module="series">Visual Series<small>Sequences and changes</small></button>
+      <button class="navbtn" data-module="numerical">Numerical Reasoning<small>CIB tables and calculations</small></button>
+      <button class="navbtn" data-module="clerical">Clerical Accuracy<small>Codes, data and matching</small></button>
+      <button class="navbtn" data-module="classification">Rule Classification<small>Instruction assimilation</small></button>
+      <button class="navbtn" data-module="sjt">Situational Judgement<small>CIB Tech scenarios</small></button>
+
+      <div class="section-title">Session Setup</div>
+      <div class="controls">
+        <label>Mode
+          <select id="mode">
+            <option value="learn">Learning mode: instant explanations</option>
+            <option value="assess">Assessment mode: timed, review at end</option>
+          </select>
+        </label>
+        <label>Difficulty
+          <select id="difficulty">
+            <option value="mixed">Mixed</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </label>
+        <label>Question count
+          <select id="count">
+            <option>10</option>
+            <option selected>15</option>
+            <option>20</option>
+            <option>30</option>
+            <option>45</option>
+            <option>60</option>
+            <option>90</option>
+          </select>
+        </label>
+        <label>Timer per question
+          <select id="seconds">
+            <option value="45">45 sec</option>
+            <option value="60" selected>60 sec</option>
+            <option value="75">75 sec</option>
+            <option value="90">90 sec</option>
+          </select>
+        </label>
+        <button class="btn secondary" id="openCoach">Open technique guide</button>
+        <button class="btn danger" id="resetProgress">Reset saved progress</button>
+      </div>
+      <div class="footer-note">
+        This tool is for preparation and skill-building. It is not a copy of the real Odyssey assessment, whose exact item bank and scoring are proprietary.
+      </div>
+    </aside>
+
+    <main class="main" id="main"></main>
+  </div>
+</div>
+
+<div class="modal" id="coachModal">
+  <div class="modal-card">
+    <div class="topline">
+      <h2 style="margin:0">High-Accuracy Technique Guide</h2>
+      <button class="btn secondary" id="closeCoach">Close</button>
+    </div>
+    <div id="coachContent"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const $ = (s, root=document) => root.querySelector(s);
+  const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+  const rand = (min,max) => Math.floor(Math.random()*(max-min+1))+min;
+  const choice = arr => arr[Math.floor(Math.random()*arr.length)];
+  const shuffle = arr => arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+  const fmt = n => Number.isInteger(n) ? String(n) : String(Math.round(n*100)/100);
+
+  const state = {
+    module: null, questions: [], index: 0, selected: null, score: 0, answers: [],
+    timer: null, remaining: 0, startedAt: null
+  };
+
+  const storeKey = "odyssey_cib_practice_v2";
+  const saved = () => JSON.parse(localStorage.getItem(storeKey) || '{"sessions":[]}');
+  const saveSession = (session) => {
+    const s = saved();
+    s.sessions.unshift(session);
+    s.sessions = s.sessions.slice(0,20);
+    localStorage.setItem(storeKey, JSON.stringify(s));
+    updateSavedBadge();
+  };
+  const updateSavedBadge = () => {
+    const s = saved();
+    const best = s.sessions.length ? Math.max(...s.sessions.map(x=>x.percent)) : 0;
+    $("#savedBadge").textContent = `Progress: ${s.sessions.length} sessions · Best ${best}%`;
+  };
+
+  const modules = {
+    matrix: { title:"Pattern Matrices", skill:"Pattern recognition, rule stacking, visual logic", gen: genMatrix, coach: matrixCoach },
+    series: { title:"Visual Series", skill:"Sequence recognition, rotation, alternation", gen: genSeries, coach: seriesCoach },
+    numerical: { title:"Numerical Reasoning", skill:"Ratios, percentages, tables, CIB-style interpretation", gen: genNumerical, coach: numericalCoach },
+    clerical: { title:"Clerical Accuracy", skill:"Speed, data checking, error detection", gen: genClerical, coach: clericalCoach },
+    classification: { title:"Rule Classification", skill:"Instruction assimilation and categorisation", gen: genClassification, coach: classificationCoach },
+    sjt: { title:"Situational Judgement", skill:"Professional judgement in CIB Technology", gen: genSJT, coach: sjtCoach }
+  };
+
+  function tile(symbol, color, size, rotate=0){
+    const colors = {blue:"#75e4ff", purple:"#b4a7ff", green:"#67e8a7", yellow:"#ffd166", red:"#ff7a8a", white:"#f4f7ff"};
+    return `<div class="tile ${size==='small'?'small':''}" style="color:${colors[color]||color}; transform:rotate(${rotate}deg)">${symbol}</div>`;
+  }
+
+  function home(){
+    state.module = null;
+    clearInterval(state.timer);
+    $("#main").innerHTML = `
+      <section class="hero">
+        <h2>Built for Standard Bank CIB Technology Graduate preparation</h2>
+        <p>This app trains the major skill families likely to matter for an Odyssey-style online assessment: fast learning, pattern recognition, numerical decision-making, data accuracy, instruction assimilation and workplace judgement.</p>
+        <p class="bank-note"><strong>Best use:</strong> spend 20–30 minutes in Learning Mode per module, then run Assessment Mode under time pressure. Review mistakes and repeat hard questions until your accuracy is stable.</p>
+      </section>
+      <div class="cards">
+        <div class="card"><h3>Learning Mode</h3><div class="metric">Explain</div><p>Instant feedback, step-by-step reasoning and pattern technique after every question.</p></div>
+        <div class="card"><h3>Assessment Mode</h3><div class="metric">Timed</div><p>No feedback until the end. Simulates pressure and records your score history locally.</p></div>
+        <div class="card"><h3>Difficulty Bands</h3><div class="metric">E / M / H</div><p>Train fundamentals first, then mixed and hard sets for exam readiness.</p></div>
+      </div>
+      <section class="question-card">
+        <h2 style="margin-top:0">4-day preparation route</h2>
+        <table>
+          <tr><th>Day</th><th>Focus</th><th>Target</th></tr>
+          <tr><td>Day 1</td><td>Pattern matrices + visual series</td><td>Learn SCAN: Shape, Count, Arrangement, Next-step rule.</td></tr>
+          <tr><td>Day 2</td><td>Numerical + clerical accuracy</td><td>Build calculation confidence and reduce careless errors.</td></tr>
+          <tr><td>Day 3</td><td>Classification + SJT</td><td>Practise reading rules once and applying them accurately.</td></tr>
+          <tr><td>Day 4</td><td>Mixed timed mocks</td><td>Run 2–3 assessment sessions, review, then rest.</td></tr>
+        </table>
+        <div class="toolbar">
+          <button class="btn" onclick="window.__startModule('matrix')">Start Pattern Matrices</button>
+          <button class="btn secondary" onclick="window.__startModule('numerical')">Start Numerical Reasoning</button>
+          <button class="btn ghost" onclick="window.__showSummary()">View saved score history</button>
+        </div>
+      </section>
+      <section class="question-card">
+        <h2 style="margin-top:0">Accuracy rules for the real assessment</h2>
+        <ul class="coach-list">
+          <li><strong>Do not over-game personality/SJT items.</strong> Consistency matters. Choose the response that shows integrity, accountability, calm escalation and stakeholder awareness.</li>
+          <li><strong>For CIB Technology, think operational risk.</strong> Prioritise production stability, data accuracy, client impact, security, compliance and transparent communication.</li>
+          <li><strong>For games, protect accuracy first.</strong> Speed helps only when your base accuracy is strong. Wild guessing can damage consistency.</li>
+        </ul>
+      </section>
+    `;
+  }
+
+  function startModule(name){
+    state.module = name;
+    const diff = $("#difficulty").value;
+    const count = parseInt($("#count").value,10);
+    state.questions = buildQuestions(name, diff, count);
+    state.index = 0; state.selected = null; state.score = 0; state.answers = []; state.startedAt = Date.now();
+    renderQuestion();
+  }
+  window.__startModule = startModule;
+  window.__showSummary = showSummary;
+
+  function buildQuestions(name, diff, count){
+    const gen = modules[name].gen;
+    let qs = [];
+    let safety = 0;
+    while(qs.length < count && safety < count*20){
+      const q = gen(diff === "mixed" ? choice(["easy","medium","hard"]) : diff);
+      q.id = `${name}-${Date.now()}-${safety}-${Math.random()}`;
+      qs.push(q);
+      safety++;
+    }
+    return qs;
+  }
+
+  function startTimer(){
+    clearInterval(state.timer);
+    const isAssess = $("#mode").value === "assess";
+    if(!isAssess){ $("#timer").textContent = "Learning mode"; return; }
+    state.remaining = parseInt($("#seconds").value,10);
+    $("#timer").textContent = `${state.remaining}s`;
+    state.timer = setInterval(() => {
+      state.remaining--;
+      $("#timer").textContent = `${state.remaining}s`;
+      if(state.remaining <= 0){
+        clearInterval(state.timer);
+        submitAnswer(true);
+      }
+    },1000);
+  }
+
+  function renderQuestion(){
+    clearInterval(state.timer);
+    state.selected = null;
+    const q = state.questions[state.index];
+    const progress = Math.round((state.index/state.questions.length)*100);
+    $("#main").innerHTML = `
+      <div class="topline">
+        <div>
+          <div class="section-title">${modules[state.module].title}</div>
+          <h2 style="margin:0">${modules[state.module].skill}</h2>
+        </div>
+        <div class="timer" id="timer"></div>
+      </div>
+      <div class="progress-wrap"><div class="progress" style="width:${progress}%"></div></div>
+      <div class="question-card">
+        <div class="qmeta">
+          <span class="tag">Question ${state.index+1} / ${state.questions.length}</span>
+          <span class="tag ${q.difficulty==='easy'?'good':q.difficulty==='medium'?'warn':'bad'}">${q.difficulty.toUpperCase()}</span>
+          <span class="tag">${q.type}</span>
+        </div>
+        <div class="prompt">${q.prompt}</div>
+        ${q.stimulus || ""}
+        <div class="options">
+          ${q.options.map((o,i)=>`<button class="option" data-i="${i}">${o.html ?? o}</button>`).join("")}
+        </div>
+        <div id="explain" class="explain hidden"></div>
+        <div class="toolbar">
+          <button class="btn secondary" id="quit">Quit module</button>
+          <div>
+            <button class="btn ghost" id="skip">Skip</button>
+            <button class="btn" id="submit" disabled>Submit</button>
+          </div>
+        </div>
+      </div>
+    `;
+    $$(".option").forEach(btn => btn.addEventListener("click", () => {
+      state.selected = parseInt(btn.dataset.i,10);
+      $$(".option").forEach(b=>b.classList.remove("selected"));
+      btn.classList.add("selected");
+      $("#submit").disabled = false;
+    }));
+    $("#submit").addEventListener("click", () => submitAnswer(false));
+    $("#skip").addEventListener("click", () => submitAnswer(true));
+    $("#quit").addEventListener("click", home);
+    startTimer();
+  }
+
+  function submitAnswer(timedOutOrSkipped){
+    clearInterval(state.timer);
+    const q = state.questions[state.index];
+    const selected = timedOutOrSkipped ? null : state.selected;
+    const correct = selected === q.answer;
+    if(correct) state.score++;
+    state.answers.push({q, selected, correct, timedOutOrSkipped});
+    const isLearn = $("#mode").value === "learn";
+    if(isLearn){
+      $$(".option").forEach((btn,i)=>{
+        if(i===q.answer) btn.classList.add("correct");
+        if(selected===i && i!==q.answer) btn.classList.add("wrong");
+        btn.disabled = true;
+      });
+      const chosen = selected === null ? "No answer selected." : `You chose: ${q.options[selected].plain ?? q.options[selected]}.`;
+      $("#explain").classList.remove("hidden");
+      $("#explain").innerHTML = `<strong>${correct ? "Correct." : "Not quite."}</strong> ${chosen}<br><br>${q.explanation}<br><br><strong>Technique:</strong> ${q.technique}`;
+      $("#submit").textContent = state.index === state.questions.length-1 ? "Finish" : "Next";
+      $("#submit").disabled = false;
+      $("#submit").onclick = nextQuestion;
+      $("#skip").classList.add("hidden");
+    } else {
+      nextQuestion();
+    }
+  }
+
+  function nextQuestion(){
+    if(state.index < state.questions.length-1){
+      state.index++;
+      renderQuestion();
+    } else {
+      finish();
+    }
+  }
+
+  function finish(){
+    clearInterval(state.timer);
+    const percent = Math.round((state.score/state.questions.length)*100);
+    const duration = Math.round((Date.now()-state.startedAt)/1000);
+    const session = {
+      date: new Date().toLocaleString(), module: modules[state.module].title,
+      mode: $("#mode").value, difficulty: $("#difficulty").value, score: state.score,
+      total: state.questions.length, percent, duration
+    };
+    saveSession(session);
+    const byDiff = ["easy","medium","hard"].map(d=>{
+      const items = state.answers.filter(a=>a.q.difficulty===d);
+      const got = items.filter(a=>a.correct).length;
+      return {d, got, total:items.length, pct:items.length?Math.round(got/items.length*100):0};
+    });
+    $("#main").innerHTML = `
+      <section class="hero">
+        <h2>Session complete: ${modules[state.module].title}</h2>
+        <p>You scored <strong>${state.score}/${state.questions.length}</strong> (${percent}%). Duration: ${Math.floor(duration/60)}m ${duration%60}s.</p>
+      </section>
+      <div class="result-grid">
+        <div class="card"><h3>Overall</h3><div class="metric">${percent}%</div><p>${scoreMessage(percent)}</p></div>
+        ${byDiff.map(x=>`<div class="card"><h3>${x.d.toUpperCase()}</h3><div class="metric">${x.total?x.pct:"—"}%</div><p>${x.total?`${x.got}/${x.total} correct`:"No questions"}</p></div>`).join("")}
+      </div>
+      <section class="question-card">
+        <h2 style="margin-top:0">Review</h2>
+        ${state.answers.map((a,i)=>reviewHTML(a,i)).join("")}
+        <div class="toolbar">
+          <button class="btn" onclick="window.__startModule('${state.module}')">Retry this module</button>
+          <button class="btn secondary" onclick="window.__showSummary()">Score history</button>
+          <button class="btn ghost" onclick="window.__goHome()">Dashboard</button>
+        </div>
+      </section>
+    `;
+  }
+  window.__goHome = home;
+
+  function scoreMessage(p){
+    if(p>=85) return "Strong exam-readiness. Keep timing sharp.";
+    if(p>=70) return "Good foundation. Review mistakes and hard items.";
+    if(p>=55) return "Developing. Use Learning Mode before another timed run.";
+    return "Focus on technique first, then speed.";
+  }
+
+  function reviewHTML(a,i){
+    const q=a.q;
+    const selected = a.selected===null ? "No answer" : (q.options[a.selected].plain ?? q.options[a.selected]);
+    const correct = q.options[q.answer].plain ?? q.options[q.answer];
+    return `<div class="review-item">
+      <div><strong>Q${i+1}</strong> · <span class="${a.correct?'tag good':'tag bad'}">${a.correct?'Correct':'Incorrect'}</span> · ${q.type} · ${q.difficulty}</div>
+      <div style="margin-top:8px;color:#dfe8ff">${q.prompt.replace(/<[^>]+>/g,'')}</div>
+      <div class="tiny" style="margin-top:8px">Your answer: ${selected} | Correct: ${correct}</div>
+      <div class="tiny" style="margin-top:8px">${q.explanation}</div>
+    </div>`;
+  }
+
+  function showSummary(){
+    const s = saved();
+    $("#main").innerHTML = `
+      <section class="hero"><h2>Saved Score History</h2><p>Stored locally in this browser only.</p></section>
+      <section class="question-card">
+      ${s.sessions.length ? `<table><tr><th>Date</th><th>Module</th><th>Mode</th><th>Difficulty</th><th>Score</th><th>Time</th></tr>
+        ${s.sessions.map(x=>`<tr><td>${x.date}</td><td>${x.module}</td><td>${x.mode}</td><td>${x.difficulty}</td><td>${x.score}/${x.total} (${x.percent}%)</td><td>${Math.floor(x.duration/60)}m ${x.duration%60}s</td></tr>`).join("")}</table>` : `<p>No saved sessions yet.</p>`}
+        <button class="btn secondary" onclick="window.__goHome()">Back to dashboard</button>
+      </section>
+    `;
+  }
+  window.__showSummary = showSummary;
+
+  // Question Generators
+  function genMatrix(difficulty){
+    const symbols = ["●","■","▲","◆","⬟","✦"];
+    const colors = ["blue","purple","green","yellow","red"];
+    const rule = choice(difficulty==="easy" ? ["shapeCycle","countSum"] : difficulty==="medium" ? ["colorCycle","rotation","shapeColor"] : ["twoRule","countColor"]);
+    let prompt = "Find the missing tile in the 3×3 matrix.";
+    let grid = [], answerTile, explanation, technique;
+    const s = shuffle(symbols).slice(0,3), c = shuffle(colors).slice(0,3);
+    if(rule==="shapeCycle"){
+      for(let r=0;r<3;r++) for(let col=0;col<3;col++) grid.push(tile(s[(r+col)%3], c[0], "small"));
+      answerTile = tile(s[(2+2)%3], c[0], "small");
+      explanation = "The shapes cycle one step forward across each row and continue the same diagonal pattern. In the last cell, the cycle requires the third repeated rule result.";
+      technique = "Check rows first, then diagonals. A simple cycle often shifts by one place per row.";
+    } else if(rule==="countSum"){
+      const nums = [[1,2,3],[2,3,5],[3,4,7]];
+      for(let r=0;r<3;r++) for(let col=0;col<3;col++) grid.push(tile(String(nums[r][col]), c[0], "small"));
+      answerTile = tile("7", c[0], "small");
+      explanation = "In each row, the third number equals the first plus the second: 1+2=3, 2+3=5, so 3+4=7.";
+      technique = "For number matrices, test row arithmetic before looking for complex visual rules.";
+    } else if(rule==="colorCycle"){
+      for(let r=0;r<3;r++) for(let col=0;col<3;col++) grid.push(tile(s[0], c[(r+col)%3], "small"));
+      answerTile = tile(s[0], c[(2+2)%3], "small");
+      explanation = "The colour changes in a repeating three-colour cycle across rows and columns. The missing bottom-right tile follows the same colour cycle.";
+      technique = "Separate shape from colour. If shape is constant, colour is probably carrying the rule.";
+    } else if(rule==="rotation"){
+      const rots=[0,45,90];
+      for(let r=0;r<3;r++) for(let col=0;col<3;col++) grid.push(tile("▲", c[1], "small", rots[(r+col)%3]));
+      answerTile = tile("▲", c[1], "small", rots[(2+2)%3]);
+      explanation = "The triangle rotates by a fixed step as you move across each row. The final position continues that rotation sequence.";
+      technique = "When the object stays the same, inspect orientation: up, right, down, left or fixed angle steps.";
+    } else if(rule==="shapeColor"){
+      for(let r=0;r<3;r++) for(let col=0;col<3;col++) grid.push(tile(s[col], c[r], "small"));
+      answerTile = tile(s[2], c[2], "small");
+      explanation = "Columns control shape and rows control colour. Bottom-right must use the third column's shape and the third row's colour.";
+      technique = "Look for independent row and column rules. One dimension may control shape, another may control colour.";
+    } else if(rule==="twoRule"){
+      for(let r=0;r<3;r++) for(let col=0;col<3;col++) grid.push(tile(s[(r+col)%3], c[(r*2+col)%3], "small", (r+col)*45));
+      answerTile = tile(s[(2+2)%3], c[(2*2+2)%3], "small", (2+2)*45);
+      explanation = "Two rules operate together: shape cycles diagonally, while colour advances using a different row-column rhythm. The missing tile must satisfy both.";
+      technique = "For hard matrices, do not solve visually all at once. Isolate shape, colour, count and rotation.";
+    } else {
+      const nums = [[2,4,6],[3,6,9],[4,8,12]];
+      for(let r=0;r<3;r++) for(let col=0;col<3;col++) grid.push(tile(String(nums[r][col]), c[(r+col)%3], "small"));
+      answerTile = tile("12", c[(2+2)%3], "small");
+      explanation = "Numbers multiply across each row: row values are base ×1, ×2, ×3. Colours also cycle diagonally. The answer is 12 with the correct final colour.";
+      technique = "Hard items may combine arithmetic with colour. Solve content first, then visual attribute.";
+    }
+    const wrongs = Array.from({length:5},(_,i)=> {
+      const sym = choice(symbols.concat(["1","5","8","9","10","11"]));
+      return tile(sym, choice(colors), "small", choice([0,45,90,135]));
+    }).filter(x=>x!==answerTile).slice(0,3);
+    const options = shuffle([answerTile,...wrongs]).map(h=>({html:h, plain:h.replace(/<[^>]*>/g,"").trim()||"visual tile"}));
+    const answer = options.findIndex(o=>o.html===answerTile);
+    const display = grid.map((g,i)=> i===8 ? `<div class="tile small">?</div>` : g).join("");
+    return {difficulty, type:"Matrix logic", prompt, stimulus:`<div class="matrix">${display}</div>`, options, answer, explanation, technique};
+  }
+
+  function genSeries(difficulty){
+    const patterns = difficulty==="easy" ? ["plus","minus","alternate","pairCycle","letterStep"] : difficulty==="medium" ? ["multiply","rotate","addGaps","shapeCount","twoLane"] : ["twoStep","nested","fibonacci","primeIndex","rotationCount"];
+    const p = choice(patterns);
+    let seq, ans, explanation, technique, prompt="What comes next in the series?";
+    if(p==="plus"){
+      const start=rand(2,8), step=rand(2,6); seq=[0,1,2,3,4].map(i=>start+i*step); ans=start+5*step;
+      explanation=`The sequence adds ${step} each time. The next value is ${seq[4]} + ${step} = ${ans}.`;
+      technique="Check constant addition before multiplication or alternating rules.";
+    } else if(p==="minus"){
+      const start=rand(45,90), step=rand(3,8); seq=[0,1,2,3,4].map(i=>start-i*step); ans=start-5*step;
+      explanation=`The sequence subtracts ${step} each time. The next value is ${seq[4]} − ${step} = ${ans}.`;
+      technique="For descending sequences, calculate the difference between terms and confirm it repeats.";
+    } else if(p==="alternate"){
+      seq=["●","■","●","■","●"]; ans="■";
+      explanation="The sequence alternates between circle and square.";
+      technique="For easy visual series, test simple alternation first.";
+    } else if(p==="pairCycle"){
+      seq=["AA","BB","CC","AA","BB"]; ans="CC";
+      explanation="The pairs repeat in a three-part cycle: AA, BB, CC.";
+      technique="When symbols repeat, identify the cycle length before choosing the next item.";
+    } else if(p==="letterStep"){
+      const letters=["B","D","F","H","J"]; seq=letters; ans="L";
+      explanation="The letters move forward by two positions in the alphabet: B, D, F, H, J, so L follows.";
+      technique="For letter series, translate letters into alphabet positions and check the step size.";
+    } else if(p==="multiply"){
+      const start=choice([2,3,4]); seq=[start,start*2,start*4,start*8,start*16]; ans=start*32;
+      explanation="Each term doubles. Continue by multiplying the last term by 2.";
+      technique="When gaps grow larger, test multiplication.";
+    } else if(p==="rotate"){
+      seq=["▲","▶","▼","◀","▲"]; ans="▶";
+      explanation="The arrow rotates 90° clockwise each step. After up comes right.";
+      technique="For symbols, track orientation as if it is rotating.";
+    } else if(p==="addGaps"){
+      const start=rand(3,9); seq=[start,start+2,start+5,start+9,start+14]; ans=start+20;
+      explanation="The gaps are +2, +3, +4, +5, so the next gap is +6.";
+      technique="If the difference is not constant, inspect whether the differences themselves increase steadily.";
+    } else if(p==="shapeCount"){
+      seq=["●","●●","●●●","●●●●","●●●●●"]; ans="●●●●●●";
+      explanation="The number of circles increases by one each step.";
+      technique="For visual sequences, count objects before analysing their arrangement.";
+    } else if(p==="twoLane"){
+      seq=["2A","4B","6A","8B","10A"]; ans="12B";
+      explanation="The numbers increase by 2 while the letters alternate A, B.";
+      technique="Split the item into lanes: solve the number lane and the symbol/letter lane separately.";
+    } else if(p==="twoStep"){
+      const a=rand(2,5); seq=[a,a+2,(a+2)*2,(a+2)*2+2,((a+2)*2+2)*2]; ans=seq[4]+2;
+      explanation="The sequence alternates +2, ×2, +2, ×2, so the next operation is +2.";
+      technique="If one rule fails, compare operations between terms and look for alternation.";
+    } else if(p==="nested"){
+      seq=["1●","2■","4●","7■","11●"]; ans="16■";
+      explanation="Numbers increase by +1, +2, +3, +4, so next is +5. Symbols alternate circle, square.";
+      technique="Hard series can combine number growth with symbol alternation. Solve each layer separately.";
+    } else if(p==="fibonacci"){
+      seq=[3,5,8,13,21]; ans=34;
+      explanation="Each term equals the sum of the previous two: 8+13=21, so 13+21=34.";
+      technique="When no single difference works, test whether each term combines earlier terms.";
+    } else if(p==="primeIndex"){
+      seq=[2,3,5,7,11]; ans=13;
+      explanation="The sequence lists prime numbers in order. The next prime after 11 is 13.";
+      technique="Recognise common special sequences: primes, squares, cubes and Fibonacci.";
+    } else {
+      seq=["1▲","2▶","3▼","4◀","5▲"]; ans="6▶";
+      explanation="The number increases by one while the arrow rotates 90° clockwise each step.";
+      technique="For hard visual series, expect two rules at once: one numeric and one spatial.";
+    }
+    let distractors;
+    if(typeof ans==="number") distractors=[ans+1, Math.max(0,ans-1), ans+2, ans*2].filter((v,i,a)=>a.indexOf(v)===i);
+    else distractors=["●","■","▲","▶","12A","16●","CC","L"].filter(x=>x!==ans);
+    let opts = shuffle([ans,...shuffle(distractors).slice(0,3)]);
+    const options = opts.map(o=>({html:String(o), plain:String(o)}));
+    const answer=options.findIndex(o=>o.plain===String(ans));
+    const htmlSeq = seq.map(v=>`<div class="tile small">${v}</div>`).join(`<span class="arrow">→</span>`) + `<span class="arrow">→</span><div class="tile small">?</div>`;
+    return {difficulty,type:"Visual series",prompt,stimulus:`<div class="series">${htmlSeq}</div>`,options,answer,explanation,technique};
+  }
+
+  function genNumerical(difficulty){
+    const type = choice(difficulty==="easy" ? ["percent","ratio"] : difficulty==="medium" ? ["growth","weighted"] : ["fx","multi"]);
+    let prompt, table="", options, ans, explanation, technique;
+    if(type==="percent"){
+      const base=rand(80,180)*10, pct=choice([5,10,12,15,20]); ans=base*pct/100;
+      prompt=`A trading support team processed ${base} tickets this month. ${pct}% were priority incidents. How many were priority incidents?`;
+      explanation=`${pct}% of ${base} = ${base} × ${pct}/100 = ${ans}.`;
+      technique="Convert the percentage to a fraction or decimal, then multiply.";
+      options=makeNumOptions(ans);
+    } else if(type==="ratio"){
+      const a=rand(2,5), b=rand(3,7), total=(a+b)*rand(20,40); ans=total*a/(a+b);
+      prompt=`A CIB technology team splits support capacity between Production and Projects in the ratio ${a}:${b}. If total capacity is ${total} hours, how many hours go to Production?`;
+      explanation=`Total parts = ${a+b}. Production = ${a}/${a+b} × ${total} = ${ans} hours.`;
+      technique="For ratios, add the parts first. Then multiply the total by the required part fraction.";
+      options=makeNumOptions(ans);
+    } else if(type==="growth"){
+      const y1=rand(120,250), y2=y1+rand(18,70); ans=Math.round(((y2-y1)/y1)*1000)/10;
+      prompt=`Monthly API calls increased from ${y1}k to ${y2}k. What was the percentage increase?`;
+      explanation=`Increase = ${y2-y1}k. Percentage increase = (${y2-y1}/${y1}) × 100 = ${ans}%.`;
+      technique="Use (new − old) / old × 100. Do not divide by the new value.";
+      options=makeNumOptions(ans, "%");
+    } else if(type==="weighted"){
+      const p1=rand(60,80), p2=rand(70,90), w1=40, w2=60; ans=Math.round((p1*w1+p2*w2)/(w1+w2));
+      prompt=`A candidate score is weighted as ${w1}% technical reasoning and ${w2}% judgement. If the scores are ${p1}% and ${p2}%, what is the weighted score?`;
+      explanation=`Weighted score = (${p1}×${w1} + ${p2}×${w2}) / 100 = ${ans}%.`;
+      technique="Multiply each score by its weight, add, then divide by total weight.";
+      options=makeNumOptions(ans, "%");
+    } else if(type==="fx"){
+      const usd=rand(120,420)*1000, rate=choice([18.2,18.5,18.75,19.1]); ans=Math.round(usd*rate/1000);
+      prompt=`A USD vendor invoice of $${usd.toLocaleString()} must be estimated in rand at R${rate}/$. What is the approximate value in thousands of rand?`;
+      explanation=`${usd.toLocaleString()} × ${rate} = R${(usd*rate).toLocaleString()}. In thousands, that is about ${ans}.`;
+      technique="For FX, multiply foreign amount by the rand-per-dollar rate. Watch the requested unit.";
+      options=makeNumOptions(ans, "k");
+    } else {
+      const rows=[
+        ["Payments", rand(95,130), rand(3,9)],
+        ["Markets", rand(80,115), rand(6,14)],
+        ["Risk", rand(70,100), rand(4,11)]
+      ];
+      const target=choice(rows);
+      ans=Math.round(target[1]*(1-target[2]/100)*10)/10;
+      table=`<table><tr><th>Platform</th><th>Current uptime hours</th><th>Planned reduction %</th></tr>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}%</td></tr>`).join("")}</table>`;
+      prompt=`After planned optimisation, what will ${target[0]} uptime hours be approximately?`;
+      explanation=`${target[0]} hours after reduction = ${target[1]} × (1 − ${target[2]}/100) = ${ans}.`;
+      technique="In table questions, identify the exact row and column first, then calculate. Avoid using values from neighbouring rows.";
+      options=makeNumOptions(ans);
+    }
+    return {difficulty,type:"Numerical reasoning",prompt,stimulus:table,options,answer:0,explanation,technique};
+    function makeNumOptions(correct, suffix=""){
+      const deltas = [1,2,5,10,15].map(x=> typeof correct==="number" && correct<20 ? x/2 : x);
+      const opts = shuffle([correct, correct+choice(deltas), Math.max(0, correct-choice(deltas)), correct+choice(deltas)*2]).slice(0,4);
+      const mapped = shuffle(opts.map(x=>({val:x, html:`${fmt(x)}${suffix}`, plain:`${fmt(x)}${suffix}`})));
+      const idx = mapped.findIndex(o=>o.val===correct);
+      if(idx!==0){ const correctObj = mapped.splice(idx,1)[0]; mapped.unshift(correctObj); }
+      return mapped;
+    }
+  }
+
+  function genClerical(difficulty){
+    const len = difficulty==="easy" ? 6 : difficulty==="medium" ? 8 : 11;
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const code = Array.from({length:len},()=>choice(chars)).join("");
+    const mutate = (str) => {
+      const arr = str.split(""); const i=rand(0,arr.length-1);
+      arr[i]=choice(chars.replace(arr[i],""));
+      return arr.join("");
+    };
+    const type = choice(["same","different","field"]);
+    let prompt, stimulus, options, answer, explanation, technique;
+    if(type==="same"){
+      const compare = Math.random()<0.55 ? code : mutate(code);
+      answer = compare===code ? 0 : 1;
+      prompt="Compare the two client reference codes. Are they identical?";
+      stimulus=`<div class="stimulus"><div class="tile" style="width:auto;padding:0 18px;font-size:1.2rem">${code}</div><div class="tile" style="width:auto;padding:0 18px;font-size:1.2rem">${compare}</div></div>`;
+      options=[{html:"Identical",plain:"Identical"},{html:"Different",plain:"Different"}];
+      explanation= answer===0 ? "Every character matches in the same position." : "At least one character differs. In accuracy tests, one swapped character is enough to make the pair different.";
+      technique="Use left-to-right chunking: compare 3 characters at a time, not the whole string at once.";
+    } else if(type==="different"){
+      const wrong = mutate(code);
+      prompt="Which code is the exact match to the target?";
+      const opts=shuffle([code,mutate(code),mutate(code),wrong]);
+      answer=opts.indexOf(code);
+      stimulus=`<div class="stimulus"><span class="tag">Target</span><div class="tile" style="width:auto;padding:0 18px;font-size:1.2rem">${code}</div></div>`;
+      options=opts.map(x=>({html:x,plain:x}));
+      explanation=`The exact target is ${code}. Similar-looking distractors contain one changed character.`;
+      technique="Mark the target mentally in chunks. First compare beginning, then middle, then ending.";
+    } else {
+      const account = `${rand(100,999)}-${rand(1000,9999)}-${rand(10,99)}`;
+      const branch = choice(["SBZA","CIBJ","GLOB","TRAD"]);
+      const ref = `${branch}-${account}`;
+      const opts = shuffle([ref, `${branch}-${account.replace("-", "")}`, `${choice(["SBZA","CIBJ","GLOB","TRAD"])}-${account}`, `${branch}-${mutate(account.replaceAll("-","")).slice(0,3)}-${rand(1000,9999)}-${rand(10,99)}`]);
+      answer=opts.indexOf(ref);
+      prompt="Select the correctly formatted transaction reference.";
+      stimulus=`<div class="bank-note">Required format: BUSINESS-###-####-##<br>Business code: ${branch}; Account: ${account}</div>`;
+      options=opts.map(x=>({html:x,plain:x}));
+      explanation=`The correct reference must keep the business code and all hyphen groups exactly: ${ref}.`;
+      technique="Accuracy is about format plus content. Check both the grouping and the characters.";
+    }
+    return {difficulty,type:"Clerical accuracy",prompt,stimulus,options,answer,explanation,technique};
+  }
+
+  function genClassification(difficulty){
+    const rules = {
+      easy:[
+        {rule:"Classify as Incident if a live service is unavailable or degraded. Otherwise classify as Request.", cases:["Payments API returns 500 errors to users","Request access to a dashboard","Mobile login is unavailable for multiple users","New starter needs a laptop profile"], ans:[0,1,0,1], labels:["Incident","Request"]},
+        {rule:"Classify as Security if the issue involves suspicious access, leaked credentials, malware, or phishing. Otherwise classify as Operational.", cases:["User reports password shared in a public channel","Batch job completed late","Email asks employee to enter banking credentials","CPU usage is higher than usual"], ans:[0,1,0,1], labels:["Security","Operational"]},
+        {rule:"Classify as Data Issue if values are missing, stale, duplicated, or incorrect. Otherwise classify as Process Issue.", cases:["Risk report shows yesterday's VaR values","Approver skipped a required sign-off step","Client file contains duplicate records","Team forgot to update the runbook"], ans:[0,1,0,1], labels:["Data Issue","Process Issue"]},
+        {rule:"Classify as Client Impact if an external client can experience the effect. Otherwise classify as Internal Only.", cases:["Corporate client cannot download a statement","Developer test environment is unavailable","Trading client receives timeout errors","Internal wiki search is slow"], ans:[0,1,0,1], labels:["Client Impact","Internal Only"]}
+      ],
+      medium:[
+        {rule:"P1 if client-facing production impact affects many users; P2 if production impact is limited; P3 if no production impact.", cases:["Trading portal down for all clients","One internal report is delayed","Developer requests test data","A single client sees intermittent payment status errors"], ans:[0,1,2,1], labels:["P1","P2","P3"]},
+        {rule:"Escalate if there is client impact, data loss risk, regulatory risk, or security risk. Do not escalate for routine requests.", cases:["Potential duplicate settlement file detected","User asks for training material","Suspicious login attempts detected","Audit evidence cannot be produced"], ans:[0,1,0,0], labels:["Escalate","Do not escalate"]},
+        {rule:"Route to Application Support for application errors, Infrastructure for server/network capacity, Data Team for incorrect datasets, and Access Management for permissions.", cases:["User receives application error code 503","Firewall latency affects the service","Dashboard total does not match source data","Analyst needs production read-only access"], ans:[0,1,2,3], labels:["Application Support","Infrastructure","Data Team","Access Management"]},
+        {rule:"Status is Green if on track, Amber if at risk but recoverable, Red if blocked or deadline will be missed.", cases:["Testing has passed and deployment window is booked","One dependency is late but workaround exists","Vendor has not delivered and release date is impossible","Minor defect found with no release impact"], ans:[0,1,2,0], labels:["Green","Amber","Red"]},
+        {rule:"Classify as Preventive if it reduces future risk, Detective if it identifies issues, Corrective if it fixes a current issue.", cases:["Add monitoring alert for failed payments","Daily reconciliation report flags mismatches","Patch a broken API endpoint","Introduce peer review before release"], ans:[0,1,2,0], labels:["Preventive","Detective","Corrective"]}
+      ],
+      hard:[
+        {rule:"Route to RiskTech if model/data quality is affected; SecOps if credentials or access are involved; Platform if performance/availability is affected; Business Ops if user procedure is the issue.", cases:["Market risk dashboard shows stale VaR data","CPU saturation causes latency spikes","User cannot remember approval steps","Privileged account shows unusual login"], ans:[0,2,3,1], labels:["RiskTech","SecOps","Platform","Business Ops"]},
+        {rule:"Emergency change if needed to restore production; Standard change if pre-approved and low risk; Normal change if planned but requires approval; Reject if unclear business justification.", cases:["Hotfix to restore failed payment processing","Monthly approved certificate rotation","New database index planned for next sprint","Request says 'change config ASAP' with no reason"], ans:[0,1,2,3], labels:["Emergency","Standard","Normal","Reject"]},
+        {rule:"For incident communication: Notify Business if client operations are affected, Notify Risk if financial/regulatory exposure exists, Notify Security if access/credential compromise exists, Notify Tech Lead only if contained technical issue.", cases:["External clients cannot submit payment files","Possible breach of privileged service account","Incorrect regulatory report may be submitted","Single non-prod build pipeline failed"], ans:[0,2,1,3], labels:["Business","Risk","Security","Tech Lead"]},
+        {rule:"Root cause category: People if training/behaviour caused it; Process if procedure/control failed; Technology if system defect/capacity failed; External if vendor/network outside bank caused it.", cases:["Untrained user skipped maker-checker step","Runbook lacked rollback instructions","Memory leak crashed the service","Third-party market data feed was unavailable"], ans:[0,1,2,3], labels:["People","Process","Technology","External"]},
+        {rule:"Data classification: Public if safe for anyone, Internal if bank-only, Confidential if client/business-sensitive, Restricted if credentials/regulatory/highly sensitive.", cases:["Published annual report","Internal team rota","Client account balance extract","Production password in a file"], ans:[0,1,2,3], labels:["Public","Internal","Confidential","Restricted"]}
+      ]
+    };
+    const pack=choice(rules[difficulty]);
+    const idx=rand(0,pack.cases.length-1);
+    const correct=pack.ans[idx];
+    const prompt=`Apply the rule and classify the case.<br><br><strong>Rule:</strong> ${pack.rule}<br><br><strong>Case:</strong> ${pack.cases[idx]}`;
+    const options=pack.labels.map(x=>({html:x,plain:x}));
+    return {
+      difficulty,type:"Rule classification",prompt,stimulus:"",
+      options,answer:correct,
+      explanation:`The case matches "${pack.labels[correct]}" under the stated rule. The key is to apply the exact trigger words in the rule, not outside assumptions.`,
+      technique:"Read the rule twice: first for categories, second for trigger words. If categories overlap, choose the highest-risk or most specific match."
+    };
+  }
+
+  function genSJT(difficulty){
+    const scenarios = [
+      {d:"easy", prompt:"You notice a small discrepancy in a report before sending it to a senior stakeholder. The deadline is close. What is the best response?", opts:["Send it now and fix it later if noticed.","Pause, verify the discrepancy quickly, and communicate if the deadline may slip.","Delete the suspicious row to make totals balance.","Ask a teammate to send it so you are not responsible."], a:1, exp:"The best response protects data accuracy and communicates transparently. CIB environments value trustworthy information over rushing flawed outputs."},
+      {d:"easy", prompt:"A teammate is struggling with a tool you know well, but you also have your own task due. What should you do?", opts:["Ignore them; your work comes first.","Do their whole task for them.","Offer a short focused explanation or resource, then return to your task.","Tell the manager they are incompetent."], a:2, exp:"This balances teamwork with accountability and time management."},
+      {d:"easy", prompt:"You are unsure about an instruction in a new assessment-style task. What is the best approach?", opts:["Guess quickly to save time.","Read the instruction again, identify the rule, then answer using that rule.","Ask another candidate what they think.","Skip every question that looks unfamiliar."], a:1, exp:"Odyssey-style tasks often test how quickly you learn rules. Accuracy starts with understanding the instruction."},
+      {d:"easy", prompt:"You make a minor mistake in a draft analysis. Nobody has noticed yet. What should you do?", opts:["Hide it because it is minor.","Correct it and tell the relevant person if it affects their decision.","Blame the source system automatically.","Wait until someone asks."], a:1, exp:"Ownership and transparency are stronger than hiding mistakes."},
+      {d:"easy", prompt:"A stakeholder asks for an update while you are still investigating. What should you do?", opts:["Ignore them until you have the final answer.","Give a brief status, what you know, what you are checking, and when you will update them again.","Say everything is fine even if you are unsure.","Send raw technical logs without explanation."], a:1, exp:"Clear progress communication builds trust without pretending certainty."},
+      {d:"easy", prompt:"You receive conflicting priorities from two team members. What is the best first step?", opts:["Pick the task you prefer.","Clarify deadlines, impact and priority with the relevant lead.","Do neither task until they agree.","Tell both people the other is wrong."], a:1, exp:"Clarifying priority based on impact and deadline shows maturity."},
+      {d:"medium", prompt:"A production dashboard used by CIB stakeholders is showing stale data. No client has complained yet. What is the best first action?", opts:["Wait for a complaint before acting.","Log the issue, check scope and freshness, notify the right support channel, and flag potential impact.","Restart random services until it works.","Post publicly that the system is broken."], a:1, exp:"You assess impact, create traceability, and escalate through the right channel without causing unnecessary panic."},
+      {d:"medium", prompt:"A senior colleague asks you to share credentials temporarily to speed up a deployment. What should you do?", opts:["Share them because they are senior.","Refuse politely, explain the security concern, and suggest approved access or emergency process.","Write the password on paper only.","Use your credentials to perform all their tasks secretly."], a:1, exp:"Credentials should not be shared. The right move is respectful refusal plus a compliant alternative."},
+      {d:"medium", prompt:"You disagree with a teammate's technical solution during a time-sensitive delivery. What is the best response?", opts:["Challenge them publicly and force your option.","Explain the risk calmly, compare options against requirements, and agree on a decision path.","Stay silent and let it fail.","Escalate immediately without discussing it."], a:1, exp:"Good judgement combines technical reasoning with collaboration and evidence."},
+      {d:"medium", prompt:"A defect is found just before deployment, but it only affects a small subset of users. What is the best response?", opts:["Deploy anyway and hope it is fine.","Assess severity, user impact and rollback options; escalate for a release decision.","Cancel the release without telling anyone.","Remove the test that found the defect."], a:1, exp:"Release decisions should be risk-based, visible and controlled."},
+      {d:"medium", prompt:"A business user asks you to extract client data to their personal email because it is urgent. What should you do?", opts:["Send it because the user requested it.","Decline and direct them to the approved secure data-sharing process.","Send only half the file.","Ask them to delete it afterwards."], a:1, exp:"Client data must be handled through approved secure channels."},
+      {d:"medium", prompt:"You are given a new problem in an unfamiliar system. What behaviour is strongest?", opts:["Pretend you know it already.","Break the problem down, check documentation/logs, ask targeted questions, and share progress.","Immediately hand it to someone else.","Make random changes to learn faster."], a:1, exp:"Learning agility means structured exploration, not pretending or random action."},
+      {d:"medium", prompt:"Your analysis shows a number that contradicts a senior person's assumption. What should you do?", opts:["Change the number to avoid conflict.","Re-check your work, then present the evidence respectfully with assumptions clearly stated.","Ignore your analysis.","Embarrass them in a meeting."], a:1, exp:"Respectful evidence-based challenge is valued in analytical roles."},
+      {d:"hard", prompt:"During a high-pressure incident, business stakeholders want an immediate ETA, but engineering has not found root cause yet. What is the best response?", opts:["Invent a confident ETA to calm them.","Say nothing until root cause is fully known.","Provide a clear status, explain what is known/unknown, give the next update time, and continue investigation.","Blame the previous team."], a:2, exp:"High-quality incident communication is transparent, bounded, and update-driven. Do not invent certainty."},
+      {d:"hard", prompt:"You find that a quick workaround would restore service but may bypass a control. What is the best response?", opts:["Apply it silently because uptime matters most.","Reject it without discussion and let the outage continue.","Escalate the trade-off, document risk, seek approval, and prefer a compliant recovery path.","Ask a friend outside the company what to do."], a:2, exp:"CIB Technology must balance service restoration with risk, control and auditability. Escalate and document."},
+      {d:"hard", prompt:"A production issue affects only one high-value corporate client. Some teammates think it should be treated as low priority because the user count is small. What is best?", opts:["Agree because only many users matter.","Assess business/client impact, contractual risk and urgency, then escalate with evidence.","Ignore the client until more clients complain.","Promise the client an immediate fix without checking feasibility."], a:1, exp:"Impact is not only user count. CIB client value, contractual risk and operational exposure matter."},
+      {d:"hard", prompt:"You discover a previous workaround has been running for months without documentation. It works, but nobody fully understands the risk. What should you do?", opts:["Leave it alone because it works.","Document current behaviour, assess risk, raise it with the owner, and plan controlled remediation.","Delete it immediately.","Tell everyone the system is unsafe without evidence."], a:1, exp:"Strong judgement reduces hidden operational risk without reckless disruption."},
+      {d:"hard", prompt:"A manager asks for a quick positive status update before you have validated the test results. What is best?", opts:["Say green to keep momentum.","State that validation is still in progress and provide the checks remaining.","Refuse to communicate at all.","Mark it green but privately keep testing."], a:1, exp:"Accurate status reporting is essential for risk management and trust."},
+      {d:"hard", prompt:"During investigation, you see logs that may contain sensitive client information. What is the best action?", opts:["Copy logs into a public chat for speed.","Use approved secure channels, share the minimum necessary information, and mask sensitive values where possible.","Send logs to your personal email to review later.","Avoid looking at logs and stop investigating."], a:1, exp:"Security and confidentiality remain important during urgent work."},
+      {d:"hard", prompt:"Two teams disagree on ownership of a production incident while the service remains degraded. What is the best response from you as a graduate?", opts:["Wait for them to resolve politics.","Help gather facts, keep investigation moving, and escalate ownership ambiguity through the incident lead.","Choose a side and blame the other team.","Close the incident because ownership is unclear."], a:1, exp:"You should help maintain momentum and use escalation channels rather than letting ambiguity block recovery."},
+      {d:"hard", prompt:"A fix passes in test but failed once in production last month. The release window is tonight. What should you recommend?", opts:["Proceed without mentioning history.","Review previous failure cause, validate rollback and monitoring, and make the release decision visible to accountable owners.","Cancel all future releases.","Ask a colleague to approve it informally."], a:1, exp:"Past incidents should inform risk controls, rollback plans and decision visibility."}
+    ].filter(s => s.d===difficulty);
+    const s = choice(scenarios);
+    return {
+      difficulty,type:"Situational judgement",prompt:s.prompt,stimulus:"",
+      options:s.opts.map(x=>({html:x,plain:x})),answer:s.a,explanation:s.exp,
+      technique:"Choose actions that show integrity, ownership, risk awareness, stakeholder communication and proper escalation. Avoid hiding issues, bypassing controls, blaming people or inventing certainty."
+    };
+  }
+
+  function matrixCoach(){return `
+    <ul class="coach-list">
+      <li><strong>SCAN method:</strong> Shape, Count, Arrangement, Next-step rule.</li>
+      <li>Never solve the whole grid at once. Test rows, columns, then diagonals.</li>
+      <li>For hard items, isolate attributes: shape, colour, number, size and rotation.</li>
+      <li>If two options look possible, choose the one satisfying the most rules.</li>
+    </ul>`}
+  function seriesCoach(){return `
+    <ul class="coach-list">
+      <li>Check constant addition, multiplication, alternation and rotation in that order.</li>
+      <li>Look at changes between terms, not just the terms themselves.</li>
+      <li>Hard series often contain two rules: one for numbers, one for symbols.</li>
+    </ul>`}
+  function numericalCoach(){return `
+    <ul class="coach-list">
+      <li>Write the required output first: number, percentage, ratio, rand value or thousands.</li>
+      <li>For percentage change: new minus old, divided by old, multiplied by 100.</li>
+      <li>For ratios: total parts first, then allocate the relevant part.</li>
+      <li>For tables: identify exact row and column before calculating.</li>
+    </ul>`}
+  function clericalCoach(){return `
+    <ul class="coach-list">
+      <li>Chunk strings into groups of 3–4 characters.</li>
+      <li>Compare position-by-position. Similar letters and numbers are traps: O/0, I/1, S/5, B/8.</li>
+      <li>For formatted references, check both content and separators.</li>
+    </ul>`}
+  function classificationCoach(){return `
+    <ul class="coach-list">
+      <li>Do not use outside assumptions. Apply only the rule given in the question.</li>
+      <li>Highlight trigger words: client impact, production, security, data loss, approval.</li>
+      <li>If categories overlap, choose the most specific or highest-risk match.</li>
+    </ul>`}
+  function sjtCoach(){return `
+    <ul class="coach-list">
+      <li>Best answers usually combine ownership, honesty, escalation and practical action.</li>
+      <li>Avoid extremes: hiding issues, blaming people, bypassing controls or acting alone on risky decisions.</li>
+      <li>In CIB Technology, prioritise production stability, security, client impact, data integrity and auditability.</li>
+    </ul>`}
+
+  function openCoach(){
+    const mod = state.module || "matrix";
+    $("#coachContent").innerHTML = `<p class="tiny">Current focus: <strong>${modules[mod].title}</strong></p>${modules[mod].coach()}`;
+    $("#coachModal").classList.add("show");
+  }
+
+  $$(".navbtn").forEach(btn=>btn.addEventListener("click",()=>{
+    $$(".navbtn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    if(btn.dataset.view==="home") home();
+    if(btn.dataset.module) startModule(btn.dataset.module);
+  }));
+  $("#openCoach").addEventListener("click",openCoach);
+  $("#closeCoach").addEventListener("click",()=>$("#coachModal").classList.remove("show"));
+  $("#coachModal").addEventListener("click",(e)=>{ if(e.target.id==="coachModal") $("#coachModal").classList.remove("show"); });
+  $("#resetProgress").addEventListener("click",()=>{
+    if(confirm("Reset all saved score history in this browser?")){
+      localStorage.removeItem(storeKey); updateSavedBadge(); showSummary();
+    }
+  });
+
+  updateSavedBadge();
+  home();
+})();
+</script>
+</body>
+</html>
